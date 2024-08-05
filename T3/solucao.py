@@ -1,4 +1,5 @@
 from typing import Iterable, Set, Tuple
+from heapq import heappush as push, heappop as pop
 
 class Nodo:
     """
@@ -27,6 +28,12 @@ class Nodo:
     def __str__(self) -> str:
         return f'{self.estado} - obtido de {self.pai.estado} fazendo {self.acao}. Custo {self.custo}' if self.pai is not None else self.estado
 
+    @classmethod
+    def set_funcao(self, funcao):
+        self.f = funcao
+
+    def __lt__(self, outro):
+        return self.f(self) < self.f(outro)
 
 def sucessor(estado:str)->Set[Tuple[str,str]]:
     """
@@ -87,38 +94,6 @@ def expande(nodo:Nodo)->Set[Nodo]:
     
     return filhos
 
-class FilaHamming():
-    def __init__(self) -> None:
-        self.fila = []
-        
-    def __len__(self) -> int:
-        return len(self.fila)
-        
-    def insere(self, nodo) -> None:
-        if nodo not in self.fila:
-            self.fila.append(nodo)
-        
-    def remove(self) -> Nodo:
-        self.fila.sort(key=lambda x: x.custo + dist_hamming(x.estado))
-        nodo = self.fila.pop(0)
-        return nodo
-
-class FilaManhattan():
-    def __init__(self) -> None: 
-        self.fila = []
-        
-    def __len__(self) -> int:
-        return len(self.fila)
-        
-    def insere(self, nodo) -> None:
-        if nodo not in self.fila:
-            self.fila.append(nodo)
-        
-    def remove(self) -> Nodo:
-        self.fila.sort(key=lambda x: x.custo + dist_manhattan(x.estado))
-        nodo = self.fila.pop(0)
-        return nodo 
-
 def dist_hamming(estado:str) -> int:
     ref = '12345678_'
     
@@ -158,13 +133,15 @@ def astar_hamming(estado:str)->list[str]:
     if insoluvel(estado):
         return None
     
+    Nodo.set_funcao(lambda a, x: x.custo + dist_hamming(x.estado))
+
     explorados = set()
-    fronteira = FilaHamming()
-    fronteira.insere(Nodo(estado=estado, pai=None, acao='', custo=0))
+    fronteira = []
+    push(fronteira, Nodo(estado=estado, pai=None, acao='', custo=0))
     caminho = []
     
     while len(fronteira) > 0:
-        v = fronteira.remove()
+        v = pop(fronteira)
         #print(v)
         if v.estado == '12345678_':
             aux = v
@@ -176,8 +153,8 @@ def astar_hamming(estado:str)->list[str]:
         explorados.add(v)
         vizinhos = expande(v)
         for u in vizinhos:
-            if u not in explorados:
-                fronteira.insere(u)
+            if u not in explorados and u not in fronteira:
+                push(fronteira, u)
     
     return None
 
@@ -195,13 +172,15 @@ def astar_manhattan(estado:str)->list[str]:
     if insoluvel(estado):
         return None
     
+    Nodo.set_funcao(lambda a, x: x.custo + dist_manhattan(x.estado))
+
     explorados = set()
-    fronteira = FilaManhattan()
-    fronteira.insere(Nodo(estado=estado, pai=None, acao='', custo=0))
+    fronteira = []
+    push(fronteira, Nodo(estado=estado, pai=None, acao='', custo=0))
     caminho = []
     
     while len(fronteira) > 0:
-        v = fronteira.remove()
+        v = pop(fronteira)
         #print(v)
         if v.estado == '12345678_':
             aux = v
@@ -213,8 +192,8 @@ def astar_manhattan(estado:str)->list[str]:
         explorados.add(v)
         vizinhos = expande(v)
         for u in vizinhos:
-            if u not in explorados:
-                fronteira.insere(u)
+            if u not in explorados and u not in fronteira:
+                push(fronteira, u)
     
     return None
 
@@ -258,5 +237,5 @@ def astar_new_heuristic(estado:str)->list[str]:
     raise NotImplementedError
 
 if __name__ == '__main__':
-    x = astar_hamming('2_3541687')
+    x = astar_hamming('1324568_7')
     print(x)
