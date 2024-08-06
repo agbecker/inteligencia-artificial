@@ -1,11 +1,45 @@
-import random
+import random, numpy as np
 from typing import Tuple, Callable
 
-def max(state, alpha, beta, depth, eval_func):
+def MAX(state, alpha, beta, depth, eval_func):
     if state.is_terminal() or depth == 0:
         return eval_func(state, 'max')
-    value = -99999999
+    value = -np.inf
     action = None
+
+    moves = list(state.legal_moves())
+    successors = [state.next_state(move) for move in moves]
+
+    for i, next_state in enumerate(successors):
+        new_value, x = MIN(next_state,alpha,beta,depth-1,eval_func)
+        if new_value > value:
+            value = new_value
+            action = moves[i]
+        alpha = max(alpha, value)
+        if alpha >= beta:
+            break
+
+    return value, action
+
+def MIN(state, alpha, beta, depth, eval_func):
+    if state.is_terminal() or depth == 0:
+        return eval_func(state, 'min')
+    value = np.inf
+    action = None
+
+    moves = list(state.legal_moves())
+    successors = [state.next_state(move) for move in moves]
+
+    for i, next_state in enumerate(successors):
+        new_value, x = MAX(next_state,alpha,beta,depth-1,eval_func)
+        if new_value < value:
+            value = new_value
+            action = moves[i]
+        beta = min(beta, value)
+        if alpha >= beta:
+            break
+
+    return value, action
 
 
 def minimax_move(state, max_depth:int, eval_func:Callable) -> Tuple[int, int]:
