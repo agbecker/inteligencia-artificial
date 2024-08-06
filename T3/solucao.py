@@ -227,6 +227,14 @@ def dfs(estado:str)->list[str]:
     # substituir a linha abaixo pelo seu codigo
     raise NotImplementedError
 
+def dist_becker(estado: str)->int:
+    ref = '123456789'
+    estado = estado.replace('_','9')
+    custo = 0
+    for i, c in enumerate(estado):
+        custo += abs(int(c)-int(ref[i]))
+    return custo    
+
 #opcional,extra
 def astar_new_heuristic(estado:str)->list[str]:
     """
@@ -237,14 +245,47 @@ def astar_new_heuristic(estado:str)->list[str]:
     :param estado: str
     :return:
     """    
+    # Heurística: a diferença entre o valor de um número e o valor do número que deveria ocupar a sua posição atual.
+    
     # substituir a linha abaixo pelo seu codigo
-    raise NotImplementedError
+    if insoluvel(estado):
+        return None
+    
+    Nodo.set_funcao(lambda a, x: x.custo + dist_becker(x.estado))
+
+    explorados = set()
+    fronteira = []
+    push(fronteira, Nodo(estado=estado, pai=None, acao='', custo=0))
+    caminho = []
+    
+    while len(fronteira) > 0:
+        v = pop(fronteira)
+        #print(v)
+        if v.estado == '12345678_':
+            print(f'Nós expandidos: {len(explorados) + len(fronteira)}')
+            aux = v
+            while aux.estado != estado:
+                caminho.append(aux.acao)
+                aux = aux.pai
+            print(f'Custo da solução: {len(caminho)}')
+            return caminho[::-1]
+        
+        explorados.add(v)
+        vizinhos = expande(v)
+        for u in vizinhos:
+            if u not in explorados and u not in fronteira:
+                push(fronteira, u)
+    
+    return None
 
 if __name__ == '__main__':
     from timeit import default_timer as time
 
-    start = time()
-    x = astar_manhattan('2_3541687')
-    stop = time()
-    print(f'Tempo decorrido: {stop-start}')
-    print(x)
+    for f in [astar_hamming, astar_manhattan, astar_new_heuristic]:
+
+        start = time()
+        x = f('2_3541687')
+        stop = time()
+        print(f'Tempo decorrido: {stop-start}')
+        print(x)
+        print('--------')

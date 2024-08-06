@@ -6,11 +6,11 @@
 
 ---
 ### A* com heurística de Hamming
-Nós expandidos: 17670
+Nós expandidos: 18440
 Custo da solução: 23
-Tempo decorrido: 4.145 s
+Tempo decorrido: 7.666 s
 
 ### A* com heurística de Manhattan
-Nós expandidos: 2762
+Nós expandidos: 2680
 Custo da solução: 23
-Tempo decorrido: 0.232 s
+Tempo decorrido: 0.332 s
