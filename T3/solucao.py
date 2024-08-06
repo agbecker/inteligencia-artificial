@@ -144,10 +144,12 @@ def astar_hamming(estado:str)->list[str]:
         v = pop(fronteira)
         #print(v)
         if v.estado == '12345678_':
+            print(f'Nós expandidos: {len(explorados) + len(fronteira)}')
             aux = v
             while aux.estado != estado:
                 caminho.append(aux.acao)
                 aux = aux.pai
+            print(f'Custo da solução: {len(caminho)}')
             return caminho[::-1]
         
         explorados.add(v)
@@ -183,10 +185,12 @@ def astar_manhattan(estado:str)->list[str]:
         v = pop(fronteira)
         #print(v)
         if v.estado == '12345678_':
+            print(f'Nós expandidos: {len(explorados) + len(fronteira)}')
             aux = v
             while aux.estado != estado:
                 caminho.append(aux.acao)
                 aux = aux.pai
+            print(f'Custo da solução: {len(caminho)}')
             return caminho[::-1]
         
         explorados.add(v)
@@ -237,5 +241,10 @@ def astar_new_heuristic(estado:str)->list[str]:
     raise NotImplementedError
 
 if __name__ == '__main__':
-    x = astar_hamming('1324568_7')
+    from timeit import default_timer as time
+
+    start = time()
+    x = astar_manhattan('2_3541687')
+    stop = time()
+    print(f'Tempo decorrido: {stop-start}')
     print(x)
