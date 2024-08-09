@@ -35,7 +35,7 @@ def utility(state, player:str) -> float:
     """
     Retorna a utilidade de um estado (terminal) 
     """
-    board = str(state.get_board())
+    board = str(state.get_board()).replace(' ','').replace('\n','')
     rows = [board[i:i+3] for i in [0,3,6]]
     cols = [board[i::3] for i in [0,1,2]]
     diags = [board[0::4], board[2:8:2]]
@@ -44,10 +44,11 @@ def utility(state, player:str) -> float:
 
     losing_move = player*3
     
+    print(options)
 
     return -1 if losing_move in options else 1
 
 if __name__ == '__main__':
     b = Board.from_string('BBB\nW.W\n...')
-    s = GameState(b, 'B')
+    s = GameState(b, 'W')
     print(utility(s, s.player))
