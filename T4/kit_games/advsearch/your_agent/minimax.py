@@ -1,46 +1,45 @@
 import random, numpy as np
 from typing import Tuple, Callable
 
-def MAX(state, alpha, beta, depth, eval_func):
-    if state.is_terminal() or depth == 0:
-        return eval_func(state, 'max')
-    value = -np.inf
-    action = None
+def MAX(state, alpha, beta, depth, utility):
+    if depth == 0 or state.is_terminal():
+        return utility(state, state.player)
+    value, action = -np.inf, None
 
-    moves = list(state.legal_moves())
-    successors = [state.next_state(move) for move in moves]
+    legal_moves = state.legal_moves()
+    next_states = [(state.next_state(move), move) for move in legal_moves]
 
-    for i, next_state in enumerate(successors):
-        new_value, x = MIN(next_state,alpha,beta,depth-1,eval_func)
+    for next, move in next_states:
+        new_value, _ = MIN(next,alpha,beta,depth-1,utility)
         if new_value > value:
             value = new_value
-            action = moves[i]
+            action = move
+        
         alpha = max(alpha, value)
         if alpha >= beta:
             break
-
+    
     return value, action
 
-def MIN(state, alpha, beta, depth, eval_func):
-    if state.is_terminal() or depth == 0:
-        return eval_func(state, 'min')
-    value = np.inf
-    action = None
+def MIN(state, alpha, beta, depth, utility):
+    if depth == 0 or state.is_terminal():
+        return utility(state, state.player)
+    value, action = np.inf, None
 
-    moves = list(state.legal_moves())
-    successors = [state.next_state(move) for move in moves]
+    legal_moves = state.legal_moves()
+    next_states = [(state.next_state(move), move) for move in legal_moves]
 
-    for i, next_state in enumerate(successors):
-        new_value, x = MAX(next_state,alpha,beta,depth-1,eval_func)
+    for next, move in next_states:
+        new_value, _ = MAX(next,alpha,beta,depth-1,utility)
         if new_value < value:
             value = new_value
-            action = moves[i]
+            action = move
+        
         beta = min(beta, value)
         if alpha >= beta:
             break
-
+    
     return value, action
-
 
 def minimax_move(state, max_depth:int, eval_func:Callable) -> Tuple[int, int]:
     """
@@ -52,4 +51,5 @@ def minimax_move(state, max_depth:int, eval_func:Callable) -> Tuple[int, int]:
                     and should return a float value representing the utility of the state for the player.
     :return: (int, int) tuple with x, y coordinates of the move (remember: 0 is the first row/column)
     """
-    raise NotImplementedError()
+    v, a = MAX(state, -np.inf, np.inf, max_depth, eval_func)
+    return a
