@@ -1,4 +1,3 @@
-import random
 from typing import Tuple
 from ..tttm.gamestate import GameState
 from ..tttm.board import Board
@@ -25,10 +24,24 @@ def make_move(state: GameState) -> Tuple[int, int]:
     # uma vez que o jogo tem profundidade maxima 9. 
     # Preencha a funcao utility com o valor de um estado terminal e passe-a como funcao de avaliação para seu minimax_move
 
-    return random.choice(range(3)), random.choice(range(3))
+    return minimax_move(state, -1, utility)
 
 def utility(state, player:str) -> float:
     """
     Retorna a utilidade de um estado (terminal) 
     """
-    return 0   # substitua pelo seu codigo
+    board = str(state.get_board())
+    rows = [board[i:i+3] for i in [0,3,6]]
+    cols = [board[i::3] for i in [0,1,2]]
+    diags = [board[0::4], board[2:8:2]]
+
+    options = rows + cols + diags
+
+    losing_move = player*3
+
+    return -1 if losing_move in options else 1
+
+if __name__ == '__main__':
+    b = Board.from_string('BBB\nW.W\n...')
+    s = GameState(b, 'W')
+    print(utility(s, s.player))
