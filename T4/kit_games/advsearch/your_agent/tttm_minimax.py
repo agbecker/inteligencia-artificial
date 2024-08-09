@@ -1,7 +1,12 @@
+import sys
+import os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from typing import Tuple
-from ..tttm.gamestate import GameState
-from ..tttm.board import Board
-from .minimax import minimax_move
+from tttm.gamestate import GameState
+from tttm.board import Board
+from minimax import minimax_move
 
 # Voce pode criar funcoes auxiliares neste arquivo
 # e tambem modulos auxiliares neste pacote.
@@ -38,10 +43,11 @@ def utility(state, player:str) -> float:
     options = rows + cols + diags
 
     losing_move = player*3
+    
 
     return -1 if losing_move in options else 1
 
 if __name__ == '__main__':
     b = Board.from_string('BBB\nW.W\n...')
-    s = GameState(b, 'W')
+    s = GameState(b, 'B')
     print(utility(s, s.player))
