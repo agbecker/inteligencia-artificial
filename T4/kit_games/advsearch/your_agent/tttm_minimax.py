@@ -2,6 +2,7 @@ import sys
 import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '.')))
 
 from typing import Tuple
 from tttm.gamestate import GameState
@@ -49,6 +50,7 @@ def utility(state, player:str) -> float:
     return -1 if losing_move in options else 1
 
 if __name__ == '__main__':
-    b = Board.from_string('BBB\nW.W\n...')
-    s = GameState(b, 'W')
-    print(utility(s, s.player))
+    b = Board.from_string('BWB\nWWB\nBW.')
+    s = GameState(b, 'B')
+    print(utility(s, 'W'))
+    print(make_move(s))

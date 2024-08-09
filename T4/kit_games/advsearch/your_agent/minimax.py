@@ -1,16 +1,17 @@
 import random, numpy as np
 from typing import Tuple, Callable
 
-def MAX(state, alpha, beta, depth, utility):
+def MAX(state, alpha, beta, depth, utility, inciting_action):
     if depth == 0 or state.is_terminal():
-        return utility(state, state.player)
+        return utility(state, state.player), inciting_action
+    
     value, action = -np.inf, None
-
     legal_moves = state.legal_moves()
     next_states = [(state.next_state(move), move) for move in legal_moves]
 
     for next, move in next_states:
-        new_value, _ = MIN(next,alpha,beta,depth-1,utility)
+        new_value, _ = MIN(next,alpha,beta,depth-1,utility,move)
+        
         if new_value > value:
             value = new_value
             action = move
@@ -21,16 +22,17 @@ def MAX(state, alpha, beta, depth, utility):
     
     return value, action
 
-def MIN(state, alpha, beta, depth, utility):
+def MIN(state, alpha, beta, depth, utility,inciting_action):
     if depth == 0 or state.is_terminal():
-        return utility(state, state.player)
+        return utility(state, state.player), inciting_action
+    
     value, action = np.inf, None
-
     legal_moves = state.legal_moves()
     next_states = [(state.next_state(move), move) for move in legal_moves]
-
+    
     for next, move in next_states:
-        new_value, _ = MAX(next,alpha,beta,depth-1,utility)
+        new_value, _ = MAX(next,alpha,beta,depth-1,utility,move)
+
         if new_value < value:
             value = new_value
             action = move
@@ -51,5 +53,9 @@ def minimax_move(state, max_depth:int, eval_func:Callable) -> Tuple[int, int]:
                     and should return a float value representing the utility of the state for the player.
     :return: (int, int) tuple with x, y coordinates of the move (remember: 0 is the first row/column)
     """
-    v, a = MAX(state, -np.inf, np.inf, max_depth, eval_func)
+    v, a = MAX(state, -np.inf, np.inf, max_depth, eval_func, None)
     return a
+
+
+if __name__=='__main__':
+    pass

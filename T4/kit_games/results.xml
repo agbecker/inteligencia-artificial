@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+<othello-match>
+	<timing start="Fri Aug  9 20:25:00 2024" finish="Fri Aug  9 20:25:27 2024"/>
+	<player directory="advsearch\humanplayer" color="B" result="win" score="1"/>
+	<player directory="advsearch\your_agent" color="W" result="loss" score="-1"/>
+	<moves>
+		<move coord="0,0" color="B"/>
+		<move coord="0,1" color="W"/>
+		<move coord="0,2" color="B"/>
+		<move coord="1,2" color="W"/>
+		<move coord="2,1" color="B"/>
+		<move coord="1,0" color="W"/>
+		<move coord="2,0" color="B"/>
+		<move coord="1,1" color="W"/>
+	</moves>
+</othello-match>
