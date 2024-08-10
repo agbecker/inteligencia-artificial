@@ -29,8 +29,14 @@ def make_move(state: GameState) -> Tuple[int, int]:
     # a sua implementacao da poda alpha-beta. Use profundidade ilimitada na sua entrega,
     # uma vez que o jogo tem profundidade maxima 9. 
     # Preencha a funcao utility com o valor de um estado terminal e passe-a como funcao de avaliação para seu minimax_move
+    
+    v, move = minimax_move(state, -1, utility)
+    
+    #x=f'As player {state.player}, in board \n{state.board}\n I am playing {move} because it has a utility of {v}\n'
+    
+    #print(x)
 
-    return minimax_move(state, -1, utility)
+    return move
 
 def utility(state, player:str) -> float:
     """
@@ -44,13 +50,18 @@ def utility(state, player:str) -> float:
     options = rows + cols + diags
 
     losing_move = player*3
+    opponent_move = f'{"W" if player == "B" else "B"}'*3
     
-    print(options)
+    player_count = sum([1 for x in options if x == losing_move])
+    opponent_count = sum([1 for x in options if x == opponent_move])
+    
+    #util = -1 if losing_move in options else 1 if opponent_move in options else 0
 
-    return -1 if losing_move in options else 1
+    #print(f'Utility called for board\n{state.board}\nWith player {player}. Utility returned = {util}\n\n')
+
+    return opponent_count - player_count
 
 if __name__ == '__main__':
-    b = Board.from_string('BWB\nWWB\nBW.')
+    b = Board.from_string('W..\nB.B\n.W.')
     s = GameState(b, 'B')
-    print(utility(s, 'W'))
     print(make_move(s))
