@@ -3,7 +3,12 @@ from typing import Tuple, Callable
 
 def MAX(state, alpha, beta, depth, utility, inciting_action):
     if depth == 0 or state.is_terminal():
-        return utility(state, state.player), inciting_action
+        player = state.player
+        if player is None: # Retrieves player that last played
+            i,j = inciting_action
+            player = str(state.get_board()).split('\n')[j][i]
+        
+        return utility(state, player), inciting_action
     
     value, action = -np.inf, None
     legal_moves = state.legal_moves()
@@ -27,7 +32,12 @@ def other_player(player):
 
 def MIN(state, alpha, beta, depth, utility,inciting_action):
     if depth == 0 or state.is_terminal():
-        return utility(state, other_player(state.player)), inciting_action
+        player = state.player
+        if player is None: # Retrieves player that last played
+            i,j = inciting_action
+            player = str(state.get_board()).split('\n')[j][i]
+        
+        return utility(state, other_player(player)), inciting_action
     
     value, action = np.inf, None
     legal_moves = state.legal_moves()

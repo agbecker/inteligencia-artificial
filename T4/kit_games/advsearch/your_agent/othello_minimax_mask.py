@@ -1,8 +1,13 @@
-import random
+import sys
+import os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '.')))
+
 from typing import Tuple
-from ..othello.gamestate import GameState
-from ..othello.board import Board
-from .minimax import minimax_move
+from othello.gamestate import GameState
+from othello.board import Board
+from minimax import minimax_move, other_player
 
 # Voce pode criar funcoes auxiliares neste arquivo
 # e tambem modulos auxiliares neste pacote.
@@ -37,7 +42,8 @@ def make_move(state) -> Tuple[int, int]:
     # Remova-o e coloque uma chamada para o minimax_move (que vc implementara' no modulo minimax).
     # A chamada a minimax_move deve receber sua funcao evaluate como parametro.
 
-    return random.choice([(2, 3), (4, 5), (5, 4), (3, 2)])
+    MAX_DEPTH = 5
+    return minimax_move(state, MAX_DEPTH, evaluate_mask)
 
 
 def evaluate_mask(state, player:str) -> float:
@@ -49,4 +55,17 @@ def evaluate_mask(state, player:str) -> float:
     :param state: state to evaluate (instance of GameState)
     :param player: player to evaluate the state for (B or W)
     """
-    return 0   # substitua pelo seu codigo
+    board = str(state.get_board()).split('\n')
+    opponent = other_player(player)
+    
+    n = len(board[0])
+    
+    count = {player: 0, opponent: 0, '.': 0}
+    
+    for i in range(n):
+        for j in range(n):
+            char = board[i][j]
+            count[char] += EVAL_TEMPLATE[i][j]
+            
+    return count[player] - count[opponent]
+    
