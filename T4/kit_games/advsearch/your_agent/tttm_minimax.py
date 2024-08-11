@@ -7,7 +7,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '.')))
 from typing import Tuple
 from tttm.gamestate import GameState
 from tttm.board import Board
-from minimax import minimax_move
+from minimax import minimax_move, other_player
 
 # Voce pode criar funcoes auxiliares neste arquivo
 # e tambem modulos auxiliares neste pacote.
@@ -45,26 +45,14 @@ def utility(state, player:str) -> float:
 
     options = rows + cols + diags
 
-    # losing_move = player*3
-    # opponent_move = f'{"W" if player == "B" else "B"}'*3
+    player_move = player*3
+    opponent_move = other_player(player)*3
     
-    # player_count = sum([1 for x in options if x == losing_move])
-    # opponent_count = sum([1 for x in options if x == opponent_move])
+    player_count = options.count(player_move)
+    opponent_count = options.count(opponent_move)
 
-    # return opponent_count - player_count
-    
-    if 'BBB' in options:
-        if player == 'B':
-            return -1
-        else:
-            return 1
-    elif 'WWW' in options:
-        if player == 'W':
-            return -1
-        else:
-            return 1
-    else:
-        return 0
+    return opponent_count - player_count
+
 
 if __name__ == '__main__':
     b = Board.from_string('...\n...\n...')

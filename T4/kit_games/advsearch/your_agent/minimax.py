@@ -15,16 +15,19 @@ def MAX(state, alpha, beta, depth, utility, inciting_action):
         if new_value > value:
             value = new_value
             action = move
-        
+
         alpha = max(alpha, value)
         if alpha >= beta:
             break
     
     return value, action
 
+def other_player(player):
+    return 'W' if player == 'B' else 'B'
+
 def MIN(state, alpha, beta, depth, utility,inciting_action):
     if depth == 0 or state.is_terminal():
-        return utility(state, state.player), inciting_action
+        return utility(state, other_player(state.player)), inciting_action
     
     value, action = np.inf, None
     legal_moves = state.legal_moves()
