@@ -1,8 +1,13 @@
-import random
+import sys
+import os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '.')))
+
 from typing import Tuple
-from ..othello.gamestate import GameState
-from ..othello.board import Board
-from .minimax import minimax_move
+from othello.gamestate import GameState
+from othello.board import Board
+from minimax import minimax_move, other_player
 
 # Voce pode criar funcoes auxiliares neste arquivo
 # e tambem modulos auxiliares neste pacote.
