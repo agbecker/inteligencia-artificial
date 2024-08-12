@@ -37,7 +37,7 @@ def MIN(state, alpha, beta, depth, utility,inciting_action):
             i,j = inciting_action
             player = str(state.get_board()).split('\n')[j][i]
         
-        return utility(state, other_player(player)), inciting_action
+        return -utility(state, player), inciting_action
     
     value, action = np.inf, None
     legal_moves = state.legal_moves()
