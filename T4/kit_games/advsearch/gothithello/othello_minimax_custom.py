@@ -52,23 +52,25 @@ def evaluate_custom(state, player:str) -> float:
     :param state: state to evaluate (instance of GameState)
     :param player: player to evaluate the state for (B or W)
     """
-    board = str(state.get_board()).replace('\n','')
+
+    board = str(state.get_board()).split('\n')
     opponent = other_player(player)
     
     if state.player is None:
         state.player = player
-        
-    opp_state = state.copy()
-    opp_state.player = opponent
+    state_opp = state.copy()
+    state_opp.player = opponent
     
-    player_moves = state.legal_moves()
-    opponent_moves = opp_state.legal_moves()
+    n = len(board[0])
     
-    player_mobility = len(player_moves)
-    opponent_mobility = len(opponent_moves)
+    count = {player: 0, opponent: 0, '.': 0}
     
-    mobility = 100 * (player_mobility - opponent_mobility)/(player_mobility + opponent_mobility) if player_mobility + opponent_mobility != 0 else 0
-    
-    corners = board[0] + board[7] + board[63] + board[56]
-    
-    return mobility*(corners.count(player)+1)
+    for i in range(n):
+        for j in range(n):
+            char = board[i][j]
+            count[char] += EVAL_TEMPLATE[i][j]
+
+    n_player = len(state.legal_moves())
+    n_opponent = len(state_opp.legal_moves())
+
+    return (count[player] - count[opponent])+(n_player - n_opponent)
