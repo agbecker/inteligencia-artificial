@@ -16,6 +16,18 @@ from minimax import minimax_move, other_player
 # do seu agente.
 
 
+EVAL_TEMPLATE = [
+    [100, -30, 6, 2, 2, 6, -30, 100],
+    [-30, -50, 1, 1, 1, 1, -50, -30],
+    [  6,   1, 1, 1, 1, 1,   1,   6],
+    [  2,   1, 1, 3, 3, 1,   1,   2],
+    [  2,   1, 1, 3, 3, 1,   1,   2],
+    [  6,   1, 1, 1, 1, 1,   1,   6],
+    [-30, -50, 1, 1, 1, 1, -50, -30],
+    [100, -30, 6, 2, 2, 6, -30, 100]
+]
+
+
 def make_move(state) -> Tuple[int, int]:
     """
     Returns a move for the given game state
@@ -28,7 +40,8 @@ def make_move(state) -> Tuple[int, int]:
     # Remova-o e coloque uma chamada para o minimax_move (que vc implementara' no modulo minimax).
     # A chamada a minimax_move deve receber sua funcao evaluate como parametro.
 
-    return random.choice([(2, 3), (4, 5), (5, 4), (3, 2)])
+    MAX_DEPTH = 5
+    return minimax_move(state, MAX_DEPTH, evaluate_custom)
 
 
 def evaluate_custom(state, player:str) -> float:
@@ -39,4 +52,23 @@ def evaluate_custom(state, player:str) -> float:
     :param state: state to evaluate (instance of GameState)
     :param player: player to evaluate the state for (B or W)
     """
-    return 0    # substitua pelo seu codigo
+    board = str(state.get_board()).replace('\n','')
+    opponent = other_player(player)
+    
+    if state.player is None:
+        state.player = player
+        
+    opp_state = state.copy()
+    opp_state.player = opponent
+    
+    player_moves = state.legal_moves()
+    opponent_moves = opp_state.legal_moves()
+    
+    player_mobility = len(player_moves)
+    opponent_mobility = len(opponent_moves)
+    
+    mobility = 100 * (player_mobility - opponent_mobility)/(player_mobility + opponent_mobility) if player_mobility + opponent_mobility != 0 else 0
+    
+    corners = board[0] + board[7] + board[63] + board[56]
+    
+    return mobility*(corners.count(player)+1)
