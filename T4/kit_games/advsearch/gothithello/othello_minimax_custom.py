@@ -8,6 +8,7 @@ from typing import Tuple
 from othello.gamestate import GameState
 from othello.board import Board
 from minimax import minimax_move, other_player
+import numpy as np
 
 # Voce pode criar funcoes auxiliares neste arquivo
 # e tambem modulos auxiliares neste pacote.
@@ -16,7 +17,7 @@ from minimax import minimax_move, other_player
 # do seu agente.
 
 
-EVAL_TEMPLATE = [
+EVAL_TEMPLATE = np.array([
     [100, -30, 6, 2, 2, 6, -30, 100],
     [-30, -50, 1, 1, 1, 1, -50, -30],
     [  6,   1, 1, 1, 1, 1,   1,   6],
@@ -25,7 +26,7 @@ EVAL_TEMPLATE = [
     [  6,   1, 1, 1, 1, 1,   1,   6],
     [-30, -50, 1, 1, 1, 1, -50, -30],
     [100, -30, 6, 2, 2, 6, -30, 100]
-]
+])
 
 
 def make_move(state) -> Tuple[int, int]:
@@ -53,24 +54,13 @@ def evaluate_custom(state, player:str) -> float:
     :param player: player to evaluate the state for (B or W)
     """
 
-    board = str(state.get_board()).split('\n')
-    opponent = other_player(player)
+    board = str(state.get_board()).split('\n')[:8]
     
-    if state.player is None:
-        state.player = player
-    state_opp = state.copy()
-    state_opp.player = opponent
-    
-    n = len(board[0])
-    
-    count = {player: 0, opponent: 0, '.': 0}
-    
-    for i in range(n):
-        for j in range(n):
-            char = board[i][j]
-            count[char] += EVAL_TEMPLATE[i][j]
+    board = np.array([list(map(lambda c: 1 if c == player else 0 if c == '.' else -1, line)) for line in board])
 
+    state.player = player
     n_player = len(state.legal_moves())
-    n_opponent = len(state_opp.legal_moves())
+    
+    count = np.ndarray.sum(EVAL_TEMPLATE * board)
 
-    return (count[player] - count[opponent])+(n_player - n_opponent)
+    return (count)+(n_player)
