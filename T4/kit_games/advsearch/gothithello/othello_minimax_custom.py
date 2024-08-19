@@ -56,11 +56,14 @@ def evaluate_custom(state, player:str) -> float:
 
     board = str(state.get_board()).split('\n')[:8]
     
-    board = np.array([list(map(lambda c: 1 if c == player else 0 if c == '.' else -1, line)) for line in board])
+    board = np.where(board == player, 1, np.where(board == '.', 0, -1))
 
+    state.player = other_player(player)
+    n_opponent = len(state.legal_moves())
+    
     state.player = player
     n_player = len(state.legal_moves())
     
-    count = np.ndarray.sum(EVAL_TEMPLATE * board)
+    count = np.sum(EVAL_TEMPLATE * board)
 
-    return (count)+(n_player)
+    return (count)+(n_player-n_opponent)
